@@ -1,0 +1,16 @@
+Reading symbols from /home/lttn/Fuzzing/Target/patch/imgread...
+
+[Thread debugging using libthread_db enabled]
+
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+
+0x0000555555555301 in _start ()
+
+unknown module pc trigger sigtrap!
+
+[trapfuzzer] save_bb_trace normal
+
