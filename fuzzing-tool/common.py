@@ -4,13 +4,6 @@ import datetime
 import json
 import re
 
-BASE_CMD = 0x1110
-AGENT_HELLO_CMD = BASE_CMD
-GET_AGENT_PID = BASE_CMD + 1
-RUN_TESTCASE = BASE_CMD + 2
-RESTART_AGENT = BASE_CMD + 3
-WRITE_TRACE_RESULT = BASE_CMD + 4
-
 
 class ExecStatus(Enum):
     NORMAL = 0xd0
@@ -70,7 +63,7 @@ class ExecResult:
     def __str__(self):
         return "status: {}, crash_info: {}".format(self.status, self.crash_info)
 
-
+'''
 class Testcase:
     def __init__(self, idx, bb_executed):
         self.idx = idx
@@ -122,7 +115,7 @@ class Testcase:
         data = "idx: {}, crash found: {}, dos found: {}, path found: {}, bb count: {}, exec count: {}".format(
             self.idx, self.crash_count, self.dos_count, self.path_found, self.get_trace_count(), self.exec_count)
         return data
-
+'''
 
 class Crash:
     def __init__(self, idx, trace, crash_info=""):
@@ -186,7 +179,7 @@ class Dos:
 class CustomLogger:
     def __init__(self):
         pass
-
+        
     def get_current_time(self):
         return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

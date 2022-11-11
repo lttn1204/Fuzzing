@@ -13,7 +13,6 @@ import shutil
 class PythonPtraceTracer():
     def __init__(self, args=[], bbfile=""):
         self.bbinfo = self.load_bb_file(bbfile)
-        print(self.bbinfo)
         self.dbg = PtraceDebugger()
         self.target_args = args
         self.coverage_module_name = args[0]
@@ -26,7 +25,6 @@ class PythonPtraceTracer():
     def create_and_attach_process(self, args):
         env = None
         args[0] = locateProgram(args[0])
-        print(args)
         pid = createChild(args, True, env)
         self.pid=pid
         return self.dbg.addProcess(pid, True)
@@ -76,7 +74,7 @@ class PythonPtraceTracer():
             fp.write(origin_byte)
         fp.close()
 
-        print("[trapfuzzer] patch {} bytes to {}!".format(len(trace), image_base_info['full_path']))
+        print("Patch {} bytes to {}!".format(len(trace), image_base_info['full_path']))
 
     def parse_pclist(self, map_mem, pc_list):
         base_dict = {}
@@ -127,7 +125,7 @@ class PythonPtraceTracer():
                 signal = process.waitSignals()
             except ProcessExit:
                 if verbose:
-                    print("[trapfuzzer] Catch ProcessExit!")
+                    print("Catch ProcessExit!")
                 break
 
             if signal.signum == SIGTRAP:
@@ -156,36 +154,34 @@ class PythonPtraceTracer():
 
                 if verbose:
                     print(
-                        "[trapfuzzer] Catch SIGTRAP on 0x{:X}".format(offset))
+                        "Catch SIGTRAP on 0x{:X}".format(offset))
 
                 if offset in exit_basci_block:
                     process.terminate()
-                    print("[trapfuzzer] enter exit block pointer")
+                    print("Enter exit block pointer")
                     break
 
                 process.writeBytes(trap_addr, obyte)
                 process.setInstrPointer(trap_addr)
                 bb_trace.append(offset)
+
             elif signal.signum == SIGSEGV:
                 crash_info = self.get_crash_info(process)
                 process.terminate()
                 self.clean_screen()
-                logging.critical("[trapfuzzer] Catch SIGSEGV")
+                logging.critical("Catch SIGSEGV")
                 status = ExecStatus.CRASH
                 break
+
             elif signal.signum == SIGABRT:
                 crash_info = self.get_crash_info(process)
-
                 process.terminate()
                 self.clean_screen()
-                logging.critical("[trapfuzzer] Catch SIGABRT")
+                logging.critical("Catch SIGABRT")
                 status = ExecStatus.ABORT
                 break
             else:
-                logging.critical("[trapfuzzer] Catch Signals: {}".format(signal))
-        print(list(set(bb_trace)))
-        print(status)
-        print(crash_info)
+                logging.critical("Catch Signals: {}".format(signal))
         ret = ExecResult(list(set(bb_trace)), status, crash_info)
         self.dbg.deleteProcess(process)
         process.terminate()
@@ -193,7 +189,6 @@ class PythonPtraceTracer():
         process.detach()
         del process
         #os.kill(self.pid,SIGKILL)
-        print("kill")
         if need_patch_to_file and status == ExecStatus.NORMAL and len(bb_trace) > 0:
             print("patch")
             self.patch_to_file(ret.trace, info,image_base_info,self.filename)

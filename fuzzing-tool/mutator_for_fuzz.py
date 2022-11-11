@@ -6,7 +6,9 @@ import random
 # Assertion_field_identification
 #array_profile: Coverage similaty value of field (2-dimensional arrays with sub array is Coverage similaty of 1 byte)
 class Mutator:
-    def __init__(self,seed)
+    def __init__(self,seed,info)
+        self.seed=open(seed,"rb").read()
+        self.info=info
 
     def Assertion_field_identification(field,array_profile,midrange_value):
         for array_value in array_profile:
@@ -31,7 +33,7 @@ class Mutator:
 
     #Identification Enumeration field
     #array_profile: Coverage similaty value of field (2-dimensional arrays with sub array is Coverage similaty of 1 byte)
-    ef Enumeration_field_identification(field,array_profile,midrange_value):
+    def Enumeration_field_identification(field,array_profile,midrange_value):
         for array_value in array_profile:
             tmp_value_count=0
             tmp_len_count=0
@@ -101,7 +103,7 @@ class Mutator:
             for t in range(256):
                 if check_all_value_bigger_than_t(t,array_value,midrange_value) and Search_u_and_v_for_t(t,array_value,midrange_value):
                     return True
-    r   eturn False
+        return False
 
     #return value "decimal" from sequence of bytes
     def Parse_value_from_bytes():

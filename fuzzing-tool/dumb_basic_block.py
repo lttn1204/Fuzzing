@@ -7,7 +7,7 @@ import sys
 
 print("go to dump bb")
 
-# Wait for analysis to end
+
 idc.auto_wait()
 
 filename = idaapi.get_root_filename()
