@@ -1,11 +1,11 @@
 class info_mutator():
     def __init__(self,seed):
-        self.seed=open(seed,"rb").read()
+        self.seed=seed
         self.count=0
         self.idx=0
         self.is_done=False
         self.value=0
-        self.is_new_idx=True
+        self.is_new_idx=False
 
     def get_next_input(self):
         self.count+=1

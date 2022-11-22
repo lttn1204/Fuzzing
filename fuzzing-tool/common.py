@@ -187,6 +187,7 @@ class CustomLogger:
         data = "[{}] {}".format(self.get_current_time(), s)
         print(data)
 
+
 class EdgeInfo:
     def __init__(self,from_bb,to_bb):
         if from_bb>to_bb:
@@ -212,8 +213,43 @@ class EdgeInfo:
         if self.from_bb == other.from_bb and self.to_bb==other.to_bb:
             return True
         return False
-    
     def __str__(self):
         print(f"{self.from_bb} - {self.to_bb}: {self.value}")
+
+
+def gen_original_seed(length):
+    arr=[]
+    for i in range(length):
+        arr.append(i%256)
+    return bytes(arr)
+
+def calculate_coverage_similaty_and_frequency_difference(edges1,edges2):
+    numerator_cs=0
+    denominator_cs=0
+    numerator_fd=0
+    denominator_fd=0
+    for edge in edges1:
+        if edge in edges2:
+            tmp=edges1[edges1.index(edge)].value+edges2[edges2.index(edge)].value
+            numerator_cs+=tmp
+            denominator_cs+=tmp
+            if edges1[edges1.index(edge)].value==edges2[edges2.index(edge)].value:
+                numerator_fd+=1
+        else:
+                denominator_fd+=1
+                denominator_cs+=edges1[edges1.index(edge)].value
+
+    for edge in edges2:
+        if edge not in edges1:
+            denominator_fd+=1
+            denominator_cs+=edges2[edges2.index(edge)].value
+
+    if denominator_cs==0:
+        denominator_cs=1
+    if denominator_fd==0:
+        denominator_fd=1
+    return numerator_cs/denominator_cs, numerator_fd/denominator_fd
+
+
     
 

@@ -94,8 +94,7 @@ class PythonPtraceTracer():
                 trap_addr = ip - 1
                 offset = trap_addr - image_base_info['image_base']
                 obyte = info[fname][offset]['origin_byte']
-                process.writeBytes(trap_addr, obyte)
-                process.setInstrPointer(trap_addr)
+                
                 if len(previous_block_info)!=0:
                     process.writeBytes(previous_block_info["trap_addr"],previous_block_info["obyte"])
                     edge=EdgeInfo(offset,previous_block_info["offset"])
@@ -103,6 +102,8 @@ class PythonPtraceTracer():
                         bb_trace.append(edge)
                     else:
                         bb_trace[bb_trace.index(edge)].value+=1
+                process.writeBytes(trap_addr, obyte)
+                process.setInstrPointer(trap_addr)
                 previous_block_info["trap_addr"]=trap_addr
                 previous_block_info["obyte"]=obyte
                 previous_block_info["offset"]=offset
