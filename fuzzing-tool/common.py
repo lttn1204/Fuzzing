@@ -339,15 +339,15 @@ def check_u_v_difference(offset,info_mutate_seed,index):#for identy_subpace
                 return True
     return False
 
-def check_other_value_lt<alpha(offset,info_mutate_seed,index,alpha):#for identy_subpace
+def check_other_value_lt_alpha(offset,info_mutate_seed,index,alpha):#for identy_subpace
     for i in range(index):
         if info_mutate_seed[offset]["coverage_similaty"][i]>alpha:
             return False
     retunr True
 
-def identy_subpace(offset,info_mutate_seed): #for offset_field_indentification and size_field_indentification
+def identy_subpace(offset,info_mutate_seed,alpha): #for offset_field_indentification and size_field_indentification
     for i in range(3,256):
-        if check_u_v_difference and check_exit_value_1_and_other_lessthan_alpha:
+        if check_u_v_difference and check_other_value_lt_alpha(offset,info_mutate_seed,index,alpha):
             return True
     return False
 
@@ -357,13 +357,15 @@ def check_value_index0_lt_alpha(offset,info_mutate_seed,alpha):#for offset_field
 
 def offset_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
     for x in range(begin_offset,end_offset):
-        if check_exit_value_1_and_other_lessthan_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed):
+        if check_value_index0_lt_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed,alpha):
             return True
     return False
 
 def size_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
     for x in range(begin_offset,end_offset):
-        if not check_exit_value_1_and_other_lessthan_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed):
+        if not check_value_index0_lt_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed,alpha):
             return True
     return False
+
+
 
