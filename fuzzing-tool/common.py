@@ -250,6 +250,120 @@ def calculate_coverage_similaty_and_frequency_difference(edges1,edges2):
         denominator_fd=1
     return numerator_cs/denominator_cs, numerator_fd/denominator_fd
 
+def check_same_field(begin_offset, end_offset, info_mutate_seed):
+    init_value=min(info_mutate_seed[begin_offset]["coverage_similaty"])
+    for offset in range(begin_offset+1,end_offset):
+        if min(info_mutate_seed[offset]["coverage_similaty"])!=init_value:
+            return False
+    return True
 
-    
+def check_exit_value_1_and_other_lessthan_alpha(offset,info_mutate_seed,alpha):#for assertion_field_identification
+    count=0
+    for i in range(256):
+        if info_mutate_seed[offset]["coverage_similaty"][i]==1:
+            count+=1
+            if count>1:
+                return False
+        else:
+            if info_mutate_seed[offset]["coverage_similaty"][i]>alpha:
+                return False
+    return True
+ 
+def assertion_field_identification(begin_offset, end_offset, info_mutate_seed,alpha):
+    for x in range(begin_offset,end_offset):
+        if check_exit_value_1_and_other_lessthan_alpha(x,info_mutate_seed,alpha)==False:
+            return False
+    return True
+
+def check_all_value_is_1(offset,info_mutate_seed): #for raw_data_field_identification
+    for i in range(256):
+        if info_mutate_seed[offset]["coverage_similaty"][i]!=1:
+            return False
+    return True
+
+
+def raw_data_field_identification(begin_offset, end_offset, info_mutate_seed,alpha):
+    for offset in range(begin_offset,end_offset):
+        if check_all_value_is_1(offset,info_mutate_seed)==False:
+            return False
+    return True
+
+def check_for_identy_subpace_for_enumeration(offset,info_mutate_seed,i,j,alpha):#for identy_subpace_for_enumeration
+    for k in range(i,256):
+        if k<j:
+            if info_mutate_seed[offset]["coverage_similaty"][k]<alpha:
+                return False
+        else:
+            if info_mutate_seed[offset]["coverage_similaty"][k]<alpha:
+                return False
+    return True
+
+def identy_subpace_for_enumeration(offset,info_mutate_seed,alpha): #for enumeration_field_indentification
+    for i in range(1,256):
+        for j in range(i+1,256):
+        if check_for_identy_subpace_for_enumeration:
+            return True
+    return False
+
+def enumeration_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
+    for x in range(begin_offset,end_offset):
+        if identy_subpace_for_enumeration(offset,info_mutate_seed,alpha):
+            return True
+    return False
+
+
+def variance_coverae_similaty(offset,info_mutate_seed):#for loop_count_field_indentification
+    init_value=info_mutate_seed[offset]['coverage_similaty'][0]
+    res=0
+    for i in range(1,256):
+        res+=abs(init_value-info_mutate_seed[offset]['coverage_similaty'][i])
+    return res/255
+
+
+def average_frequency_difference(offset,info_mutate_seed):#for loop_count_field_indentification
+    return sum(info_mutate_seed[offset]["frequency_difference"])/len(info_mutate_seed[offset]["frequency_difference"])
+
+def loop_count_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
+    beta=7.355
+    for x in range(begin_offset,end_offset):
+        if variance_coverae_similaty(x,info_mutate_seed)<beta and average_frequency_difference(offset,info_mutate_seed)>1:
+            return True
+    return False
+
+
+
+def check_u_v_difference(offset,info_mutate_seed,index):#for identy_subpace
+    for i in range(1,index):
+        for j in range(i,index):
+            if info_mutate_seed[offset]["coverage_similaty"][i]!=info_mutate_seed[offset]["coverage_similaty"][j]:
+                return True
+    return False
+
+def check_other_value_lt<alpha(offset,info_mutate_seed,index,alpha):#for identy_subpace
+    for i in range(index):
+        if info_mutate_seed[offset]["coverage_similaty"][i]>alpha:
+            return False
+    retunr True
+
+def identy_subpace(offset,info_mutate_seed): #for offset_field_indentification and size_field_indentification
+    for i in range(3,256):
+        if check_u_v_difference and check_exit_value_1_and_other_lessthan_alpha:
+            return True
+    return False
+
+
+def check_value_index0_lt_alpha(offset,info_mutate_seed,alpha):#for offset_field_indentification and size_field_indentification
+    return info_mutate_seed[offset]["coverage_similaty"][0]>alpha
+
+def offset_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
+    for x in range(begin_offset,end_offset):
+        if check_exit_value_1_and_other_lessthan_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed):
+            return True
+    return False
+
+def size_field_indentification(begin_offset, end_offset, info_mutate_seed,alpha):
+    for x in range(begin_offset,end_offset):
+        if not check_exit_value_1_and_other_lessthan_alpha(x,info_mutate_seed,alpha) and identy_subpace(x,info_mutate_seed):
+            return True
+    return False
 

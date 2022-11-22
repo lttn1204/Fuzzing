@@ -20,7 +20,6 @@ w.write(original_seed)
 w.close()
 tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "tmp"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
 original_info=tracer.trace()
-print(original_info)
 generator_input=info_mutator(original_seed)
 
 info_per_bytes={}
@@ -34,21 +33,21 @@ while True:
         for value in range(256):
             tmp1,tmp2=calculate_coverage_similaty_and_frequency_difference(original_info,info_per_bytes[value])
             coverage_similaty.append(tmp1)
+            alpha=(max(coverage_similaty)+min(coverage_similaty))/2
             frequency_difference.append(tmp2)
         info_per_bytes={}
         info_mutate_seed[idx-1]={}
         info_mutate_seed[idx-1]["coverage_similaty"]=coverage_similaty
         info_mutate_seed[idx-1]["frequency_difference"]=frequency_difference
+        nfo_mutate_seed[idx-1]["alpha"]=alpha
         generator_input.is_new_idx=False
-        print(idx)
-        print(info_mutate_seed)
 
     w=open("tmp","wb")
     w.write(new_value)
     w.close()
     tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "tmp"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
     edge_info=tracer.trace()
-    #info_mutate_seed[generator_input.idx][generator_input.value]=num_bb_trigger
+
     info_per_bytes[generator_input.value]=edge_info
 
     if generator_input.is_done:
@@ -64,9 +63,10 @@ while True:
         info_mutate_seed[idx-1]["frequency_difference"]=frequency_difference
         generator_input.is_new_idx=False
         print(info_mutate_seed)
-
-
+        break
 print(info_mutate_seed)
+
+
 
 
 
