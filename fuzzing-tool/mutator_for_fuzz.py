@@ -9,6 +9,12 @@ class Mutator:
     def __init__(self,seed,info)
         self.seed=open(seed,"rb").read()
         self.info=info
+        sefl.Assertion_field={}
+        sefl.Raw_data_field={}
+        sefl.Enumeration_field={}
+        sefl.Loop_count_field={}
+        sefl.Offset_field={}
+        sefl.Size_field={}s
 
     def Assertion_field_identification(field,array_profile,midrange_value):
         for array_value in array_profile:

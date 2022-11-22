@@ -186,3 +186,34 @@ class CustomLogger:
     def log(self, s):
         data = "[{}] {}".format(self.get_current_time(), s)
         print(data)
+
+class EdgeInfo:
+    def __init__(self,from_bb,to_bb):
+        if from_bb>to_bb:
+            from_bb,to_bb=to_bb,from_bb
+        self.from_bb=from_bb
+        self.to_bb=to_bb
+        self.value=1
+    def __gt__(self,other):
+        if self.from_bb > other.from_bb:
+            return True
+        elif self.from_bb==other.from_bb:
+            if self.to_bb>other.to_bb:
+                return True
+        return False
+    def __lt__(self,other):
+        if self.from_bb < other.from_bb:
+            return True
+        elif self.from_bb==other.from_bb:
+            if self.to_bb<other.to_bb:
+                return True
+        return False
+    def __eq__(self,other):
+        if self.from_bb == other.from_bb and self.to_bb==other.to_bb:
+            return True
+        return False
+    
+    def __str__(self):
+        print(f"{self.from_bb} - {self.to_bb}: {self.value}")
+    
+

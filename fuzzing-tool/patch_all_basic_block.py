@@ -36,7 +36,9 @@ def patch_bb(target, bb_file):
     f.close()
     fa.close()
 
-    print ("patch {} basic block of {}".format(count, fname))
-
+    print("patch {} basic block".format(count))
+    cmd="chmod +x "+output_file
+    print(cmd)
+    os.system(cmd)
 
 #patch_bb("E:\\Fuzzing\\Target\\sum", "E:\\Fuzzing\\Target\\sum-bb.txt")

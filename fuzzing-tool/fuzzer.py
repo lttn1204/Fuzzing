@@ -5,7 +5,7 @@ from tracer import PythonPtraceTracer
 
 ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida64.exe"
 file_path = "/home/lttn/Fuzzing/Target/imgread"
-input_path= "/home/lttn/Fuzzing/Target/i"
+input_path= "/home/lttn/Fuzzing/Target/input"
 #get_all_basic_block(ida_path,file_path)
 #patch_bb(file_path,file_path+"-bb.txt")
 
@@ -27,9 +27,8 @@ while True:
     w.write(new_value)
     w.close()
     tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "tmp"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
-    num_bb=tracer.trace()
-    info_mutate_seed[generator_input.idx][generator_input.value]=num_bb
-
+    num_bb_trigger=tracer.trace()
+    info_mutate_seed[generator_input.idx][generator_input.value]=num_bb_trigger
     if generator_input.is_done:
         if idx!=0:
             max_value=max(info_mutate_seed[idx].values())
