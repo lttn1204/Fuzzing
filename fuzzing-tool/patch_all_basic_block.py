@@ -5,7 +5,7 @@ import shutil
 def patch_bb(target, bb_file):
     print("Patch all basic block")
     d = os.path.dirname(target)
-    output_dir = os.path.join(d, "patch")
+    output_dir = os.path.join(d,"patch")
 
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
