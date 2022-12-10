@@ -118,10 +118,12 @@ class PythonPtraceTracer():
         return edge_trace
 
 if __name__ == '__main__':
-    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64", '-d',"/home/lttn/Fuzzing/input.txt"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
+    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64","/home/lttn/Fuzzing/input"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
     a=tracer.trace()
     c=0
+    arr=[]
     for edge in a:
-        print(edge.value,edge.from_bb)
         c+=1
+        arr.append([edge.from_bb,edge.to_bb])
     print(c)
+    print(arr)

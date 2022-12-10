@@ -4,12 +4,12 @@ from mutator_for_get_info import info_mutator
 from tracer import PythonPtraceTracer
 from common import *
 
-ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida64.exe"
+ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida.exe"
 file_path = "/home/lttn/Fuzzing/Target/base64"
 input_length = 15
 #get_all_basic_block(ida_path,file_path)
-#patch_bb(file_path,file_path+"-bb.txt")
-
+patch_bb(file_path,file_path+"-bb.txt")
+'''
 info_mutate_seed={}
 
 length_seed=input_length+1
@@ -116,7 +116,7 @@ print(f"enumeration: {len(enumeration_field)}")
 print(f"loop count: {len(loop_count_field)}")
 print(f"offset: {len(offset_field)}")
 print(f"size: {len(size_field)}")
-
+'''
 
 
 
