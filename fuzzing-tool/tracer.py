@@ -15,7 +15,6 @@ class PythonPtraceTracer():
         self.bbinfo = self.load_bb_file(bbfile)
         self.dbg = PtraceDebugger()
         self.target_args = args
-        self.coverage_module_name = args[0]
         self.pid=0
         self.filename=""
 
@@ -54,14 +53,13 @@ class PythonPtraceTracer():
 
 
     def trace(self, need_patch_to_file=False, verbose=False, exit_basci_block=[], timeout=2.0):
-        module_name = self.coverage_module_name
         info = self.bbinfo
         image_base_info={}
         process = self.create_and_attach_process(self.target_args)
         previous_block_info={}
         status = ExecStatus.NORMAL
         crash_info = ""
-        bb_trace = []
+        edge_trace = []
         while True:
             process.cont()
             try:
@@ -98,10 +96,11 @@ class PythonPtraceTracer():
                 if len(previous_block_info)!=0:
                     process.writeBytes(previous_block_info["trap_addr"],previous_block_info["obyte"])
                     edge=EdgeInfo(offset,previous_block_info["offset"])
-                    if edge not in bb_trace:
-                        bb_trace.append(edge)
+                    if edge not in edge_trace:
+                        edge_trace.append(edge)
                     else:
-                        bb_trace[bb_trace.index(edge)].value+=1
+                        edge_trace[edge_trace.index(edge)].value+=1
+                        
                 process.writeBytes(trap_addr, obyte)
                 process.setInstrPointer(trap_addr)
                 previous_block_info["trap_addr"]=trap_addr
@@ -116,8 +115,13 @@ class PythonPtraceTracer():
         process.detach()
         del process
         #os.kill(self.pid,SIGKILL)
-        return bb_trace
+        return edge_trace
 
 if __name__ == '__main__':
-    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "/home/lttn/Fuzzing/Target/input.txt"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
-    print(tracer.trace())
+    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64", '-d',"/home/lttn/Fuzzing/input.txt"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
+    a=tracer.trace()
+    c=0
+    for edge in a:
+        print(edge.value,edge.from_bb)
+        c+=1
+    print(c)

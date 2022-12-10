@@ -5,11 +5,10 @@ from tracer import PythonPtraceTracer
 from common import *
 
 ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida64.exe"
-file_path = "/home/lttn/Fuzzing/Target/imgread"
-input_length = 4
+file_path = "/home/lttn/Fuzzing/Target/base64"
+input_length = 15
 #get_all_basic_block(ida_path,file_path)
 #patch_bb(file_path,file_path+"-bb.txt")
-
 
 info_mutate_seed={}
 
@@ -18,7 +17,7 @@ original_seed=bytes([i%256 for i in range(length_seed)])
 w=open("tmp","wb")
 w.write(original_seed)
 w.close()
-tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "tmp"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
+tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64", "tmp"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
 original_info=tracer.trace()
 generator_input=info_mutator(original_seed)
 
@@ -45,7 +44,7 @@ while True:
     w=open("tmp","wb")
     w.write(new_value)
     w.close()
-    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/imgread", "tmp"], "/home/lttn/Fuzzing/Target/imgread-bb.txt")
+    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64", "tmp"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
     edge_info=tracer.trace()
 
     info_per_bytes[generator_input.value]=edge_info
@@ -98,11 +97,11 @@ print(id_field)
 
 for offsets in id_field:
     if len(offsets)!=1:
-        if assertion_field_identification(offsets[0],offsets[1],info_mutate_seed):
+        if assertion_field_identification(offsets[0],offsets[1]+1,info_mutate_seed):
             assertion_field.append(offsets)
-        elif raw_data_field_identification(offsets[0],offsets[1],info_mutate_seed):
+        elif raw_data_field_identification(offsets[0],offsets[1]+1,info_mutate_seed):
             raw_data_field.append(offsets)
-        elif enumeration_field_indentification(offsets[0],offsets[1],info_mutate_seed):
+        elif enumeration_field_indentification(offsets[0],offsets[1]+1,info_mutate_seed):
             enumeration_field.append(offsets)
         elif loop_count_field_indentification(offsets[0],offsets[1]+1,info_mutate_seed):
             loop_count_field.append(offsets)
