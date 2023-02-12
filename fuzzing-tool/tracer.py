@@ -17,6 +17,7 @@ class PythonPtraceTracer():
         self.target_args = args
         self.pid=0
         self.filename=""
+        self.input=open(args[-1],'rb').read()
 
     def create_and_attach_process(self, args):
         env = None
@@ -60,16 +61,17 @@ class PythonPtraceTracer():
         status = ExecStatus.NORMAL
         crash_info = ""
         edge_trace = []
+        bb_list=[]
         while True:
             process.cont()
             try:
                 signal = process.waitSignals()
             except ProcessExit:
-                if verbose:
-                    print("Catch ProcessExit!")
+                print("Catch ProcessExit!")
                 break
 
             if signal.signum == SIGTRAP:
+                print("Catch Trap!")
                 map_mem = readProcessMappings(process)
                 #print(map_mem)
                 for fname in self.bbinfo:
@@ -92,34 +94,55 @@ class PythonPtraceTracer():
                 trap_addr = ip - 1
                 offset = trap_addr - image_base_info['image_base']
                 obyte = info[fname][offset]['origin_byte']
-                
+                '''
                 if len(previous_block_info)!=0:
                     process.writeBytes(previous_block_info["trap_addr"],previous_block_info["obyte"])
                     edge=EdgeInfo(offset,previous_block_info["offset"])
                     if edge not in edge_trace:
                         edge_trace.append(edge)
                     else:
-                        edge_trace[edge_trace.index(edge)].value+=1
-                        
+                        edge_trace[edge_trace.index(edge)].value+=1'''
+                    
                 process.writeBytes(trap_addr, obyte)
                 process.setInstrPointer(trap_addr)
-                previous_block_info["trap_addr"]=trap_addr
+                '''previous_block_info["trap_addr"]=trap_addr
                 previous_block_info["obyte"]=obyte
-                previous_block_info["offset"]=offset
+                previous_block_info["offset"]=offset'''
+                edge_trace.append(offset)
+                print(edge_trace)
+
+            elif signal.signum == SIGSEGV:
+                print(b"Catch SIGSEGV, Input: "+self.input)
+                status = ExecStatus.CRASH
+                #self.dbg.deleteProcess(process)
+                process.terminate()
+                return []
+            elif signal.signum == SIGABRT:
+                print(b"Catch SIGABRT Input: "+self.input)
+                status = ExecStatus.ABORT
+                #self.dbg.deleteProcess()
+                process.terminate()
+                return []
             else:
-                logging.critical("Catch Signals: {}".format(signal))
+                print(b"Catch Signals:"+signal+b"Input: "+self.input)
+                process.terminate()
+                return []
                 
-        self.dbg.deleteProcess(process)
+        #self.dbg.deleteProcess(process)
         process.terminate()
-        self.dbg.quit()
-        process.detach()
-        del process
+        #self.dbg.quit()
+        #process.detach()
+        #del process
         #os.kill(self.pid,SIGKILL)
         return edge_trace
 
 if __name__ == '__main__':
-    tracer = PythonPtraceTracer(["/home/lttn/Fuzzing/Target/patch/base64","/home/lttn/Fuzzing/input"], "/home/lttn/Fuzzing/Target/base64-bb.txt")
+    file_to_fuzz="/home/lttn/Fuzzing/Target/patch/csawctf2020_roppity"
+    bb_file_to_fuzz="/home/lttn/Fuzzing/Target/csawctf2020_roppity-bb.txt"
+    tracer = PythonPtraceTracer([file_to_fuzz,"/home/lttn/Fuzzing/fuzzing-tool/input"], bb_file_to_fuzz)
+    print("hehe")
     a=tracer.trace()
+    print(a)
     c=0
     arr=[]
     for edge in a:
@@ -127,3 +150,6 @@ if __name__ == '__main__':
         arr.append([edge.from_bb,edge.to_bb])
     print(c)
     print(arr)
+
+
+    #["/home/lttn/Downloads/lava/lava/bins/base64","/home/lttn/Downloads/lava/lava/bins/input"]

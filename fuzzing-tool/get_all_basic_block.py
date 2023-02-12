@@ -6,6 +6,6 @@ def get_all_basic_block(ida_path,file_path):
     print(command)
     os.system(command)
 
-ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida.exe"
-file_path = "/home/lttn/Fuzzing/Target/base64"
+#ida_path = "/home/lttn/Fuzzing/IDA7.7/IDA7.7/ida.exe"
+#file_path = "/home/lttn/Fuzzing/Target/base64"
 #get_all_basic_block(ida_path,file_path)
